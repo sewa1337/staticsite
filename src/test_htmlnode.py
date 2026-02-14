@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_repr(self):
@@ -42,6 +42,34 @@ class TestLeafNode(unittest.TestCase):
         node = LeafNode("a", "Link", {"href": "https://example.com"})
         self.assertEqual(node.to_html(), "<a href= https://example.com >Link</a>")
 
-        
+class TestParentNode(unittest.TestCase):
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>"
+        )
+
+    def test_to_html_empty_children(self):
+        node = ParentNode("div", [])
+        self.assertEqual(node.to_html(), "<div></div>")
+    
+    def test_to_html_missing_tag(self):
+        with self.assertRaises(ValueError):
+            node = ParentNode(None, [LeafNode("span", "child")])
+            node.to_html()
+    
+    def test_to_html_multiple_children(self):
+        child1 = LeafNode("span", "child1")
+        child2 = LeafNode("span", "child2")
+        node = ParentNode("div", [child1, child2])
+        self.assertEqual(node.to_html(), "<div><span>child1</span><span>child2</span></div>")
 
 
