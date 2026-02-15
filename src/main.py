@@ -4,6 +4,7 @@ import shutil
 import re
 from markdown_blocks import markdown_to_html_node
 from inline_markdown import extract_title
+from pathlib import Path
 
 def generate_page(from_path, template_path, dest_path):
     print (f"Generating page from {from_path} to {dest_path} using {template_path}")
@@ -20,6 +21,17 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as f:
         f.write(templatecontent)
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    if os.path.isdir(dir_path_content):
+        contents = os.listdir(dir_path_content)
+        for content in contents:
+            new_dir_path_content = os.path.join(dir_path_content, content)
+            generate_pages_recursive(new_dir_path_content, template_path, dest_dir_path)
+    else:
+        destfilename = dir_path_content.replace("content", "public")
+        destfilename = destfilename.replace(".md", ".html")
+        generate_page(dir_path_content,template_path, destfilename)
+
 def copy_static_to_public(source, dest):
     #delete all content
     
@@ -32,10 +44,10 @@ def main():
     source = "/home/sebo/Dokumente/dev/staticsite/static"
     dest = "/home/sebo/Dokumente/dev/staticsite/public"
     copy_static_to_public(source, dest)
-    source = "/home/sebo/Dokumente/dev/staticsite/content/index.md"
+    source = "/home/sebo/Dokumente/dev/staticsite/content/"
     template = "/home/sebo/Dokumente/dev/staticsite/template.html"
-    dest = "/home/sebo/Dokumente/dev/staticsite/public/index.html"
-    generate_page(source, template, dest)
+    dest = "/home/sebo/Dokumente/dev/staticsite/public/"
+    generate_pages_recursive(source, template, dest)
 
 
 main()
