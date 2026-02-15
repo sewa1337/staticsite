@@ -97,3 +97,13 @@ def text_to_textnodes(text):
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
     return nodes
+
+def extract_title(markdown):
+    header = ""
+    for line in markdown.split("\n"):
+        if re.match(r"^[#]{1}[\w\d\s]", line):
+            header = line
+    if header == "":
+        raise Exception ("No header found")
+    header = header.strip('# ')
+    return header

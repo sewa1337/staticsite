@@ -6,6 +6,7 @@ from inline_markdown import (
     text_to_textnodes,
     extract_markdown_links,
     extract_markdown_images,
+    extract_title
 )
 
 from textnode import TextNode, TextType
@@ -190,7 +191,9 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             nodes,
         )
-
+    def test_extract_title(self):
+        title = extract_title("# Hello ")
+        self.assertEqual(title, "Hello")
 
 if __name__ == "__main__":
     unittest.main()
